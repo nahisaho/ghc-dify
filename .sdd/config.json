@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "testCmd": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-reporter=data:text/javascript,export default async function* (source) { let seen = 0; for await (const e of source) { if ((e.type === 'test:pass' || e.type === 'test:fail') && e.data.details?.type === 'test' && !e.data.skip && !e.data.todo && /{id}(?![0-9A-Za-z])/.test(e.data.name)) seen++; } if (seen !== 1) throw new Error('REQUIRED_TEST_NOT_EXECUTED_EXACTLY_ONCE'); }",
+    "--test-reporter-destination=stdout",
+    "--test-reporter-destination=stderr",
+    "--test-name-pattern",
+    "{id}(?![0-9A-Za-z])",
+    "{file}"
+  ],
+  "checks": [
+    {
+      "name": "test",
+      "cmd": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "--test-reporter=data:text/javascript,export default async function* (source) { const ids = ['TEST-DIFYIMG-001','TEST-DIFYIMG-002','TEST-DIFYIMG-003','TEST-DIFYIMG-004','TEST-DIFYIMG-005','TEST-DIFYIMG-006']; const counts = new Map(ids.map(id => [id, 0])); for await (const e of source) { if ((e.type === 'test:pass' || e.type === 'test:fail') && e.data.details?.type === 'test' && !e.data.skip && !e.data.todo) { for (const id of ids) if (new RegExp(id + '(?![0-9A-Za-z])').test(e.data.name)) counts.set(id, counts.get(id) + 1); } } if (ids.some(id => counts.get(id) !== 1)) throw new Error('REQUIRED_SUITE_TESTS_NOT_EXECUTED_EXACTLY_ONCE'); }",
+        "--test-reporter-destination=stdout",
+        "--test-reporter-destination=stderr",
+        "code/infrastructure/dify-image/tests/*.test.mjs"
+      ],
+      "timeoutMs": 1200000
+    }
+  ],
+  "scan": {
+    "include": ["code/**"],
+    "exclude": [".github/**"]
+  },
+  "timeoutMs": 600000,
+  "scopePolicy": "strict"
+}

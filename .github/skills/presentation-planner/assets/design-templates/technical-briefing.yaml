@@ -1,0 +1,96 @@
+id: technical-briefing
+base_template: null
+intent:
+  - architecture explanation
+  - engineering review
+  - technical proposal
+  - implementation briefing
+canvas:
+  aspect_ratio: "16:9"
+  width_in: 13.333
+  height_in: 7.5
+  safe_area_percent: 5
+  grid_columns: 12
+  max_content_blocks: 5
+colors:
+  background: "#FFFFFF"
+  surface: "#F3F3F3"
+  text_primary: "#1B1B1B"
+  text_secondary: "#505050"
+  accent: "#005A9E"
+  accent_soft: "#E5F1FB"
+  border_neutral: "#8A8886"
+  positive: "#107C10"
+  warning: "#8A5A00"
+  critical: "#A4262C"
+  brand_red: "#F25022"
+  brand_green: "#7FBA00"
+  brand_blue: "#00A4EF"
+  brand_yellow: "#FFB900"
+  chart_sequence:
+    - "#005A9E"
+    - "#F25022"
+    - "#767676"
+typography:
+  heading_font: "Aptos Display"
+  body_font: "Aptos"
+  code_font: "Cascadia Mono"
+  title_size_pt: 28
+  section_title_size_pt: 24
+  body_size_pt: 17
+  code_size_pt: 13
+  caption_size_pt: 10
+  title_weight: 700
+  body_line_spacing: 1.12
+spacing:
+  outer_margin_percent: 5
+  content_gap_percent: 1.5
+  card_padding_percent: 1.5
+components:
+  cards:
+    corner_radius: small
+    border: border_neutral
+    shadow: none
+  callouts:
+    use_accent_bar: true
+    maximum_per_slide: 2
+  tables:
+    header_fill: accent_soft
+    header_text: text_primary
+    zebra_rows: false
+    maximum_rows: 8
+  charts:
+    style: technical
+    gridlines: subtle
+    direct_labels_required: true
+    series_outline: background
+    source_note_required: true
+  diagrams:
+    connector_style: orthogonal
+    maximum_nodes: 9
+    boundary_labels_required: true
+slide_patterns:
+  - title
+  - system-context
+  - architecture
+  - sequence-or-flow
+  - component-responsibilities
+  - interface-and-data
+  - security-boundaries
+  - implementation-plan
+  - tradeoffs
+  - decision-request
+accessibility:
+  minimum_body_size_pt: 15
+  minimum_contrast_ratio: 4.5
+  never_use_color_alone: true
+  alt_text_required: true
+constraints:
+  - one primary message per slide
+  - assertion title required
+  - code samples limited to twelve visible lines
+  - diagrams must identify trust or ownership boundaries
+  - Microsoft logo colors are not used for small text on white
+  - brand_yellow uses a direct label and pattern or marker encoding
+  - charts with more than three series add pattern or shape encoding
+deviations: []

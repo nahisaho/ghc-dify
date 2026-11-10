@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "status": "observed-preimplementation-not-build-qualified",
+  "source": {
+    "repository": "https://github.com/langgenius/dify",
+    "tag": "1.19.0",
+    "commit": "8e689e868b63b6dd2b449d0eb568ca5cc7127759",
+    "releasedAt": "2026-11-04T07:36:16Z",
+    "paths": ["docker/docker-compose.yaml", "api/Dockerfile", "api/docker/entrypoint.sh", "web/Dockerfile", "web/docker/entrypoint.sh", "dify-agent/Dockerfile", "dify-agent-runtime/docker/Dockerfile", "api/controllers/mcp/mcp.py", "api/controllers/console/app/mcp_server.py", "api/services/app/mcp_server_service.py"]
+  },
+  "platform": "linux/amd64",
+  "images": {
+    "api": "langgenius/dify-api:1.19.0@sha256:9ba04a262dded58dd0237857aefae3f70a6796588fff7a2b1ff0b0eaa91a2949",
+    "web": "langgenius/dify-web:1.19.0@sha256:6b3f4f47a85d74865983163438661dc4f9d01bd4aeb93fdecae81225eab77f23",
+    "agent": "langgenius/dify-agent-backend:1.19.0@sha256:cb77b3841acced310d3f242998ecef41751fe34d3c9c90689d7628130d1cf14e",
+    "shellctl": "langgenius/dify-agent-local-sandbox:1.19.0@sha256:8b3a355f18b9660fdc9a709f7368370f01cb02c800e234b659f1803b3368900e",
+    "plugin": "langgenius/dify-plugin-daemon:0.6.14-local@sha256:1fb555e231e318c9fb25f9eb67d301ecbb247e1e8835ba7b1827a23d405af448",
+    "sandbox": "langgenius/dify-sandbox:0.2.15@sha256:942acde5b90350498f71c9f89fe1c0a578578c51521d6683783e073528b6a26a"
+  },
+  "tools": {
+    "node": {"version": "24.22.1", "npm": "11.19.1", "source": "https://nodejs.org/dist/v24.22.1/"},
+    "nvm": {"version": "v0.41.0", "source": "https://github.com/nvm-sh/nvm/releases/tag/v0.41.0"},
+    "copilot": {"version": "1.0.106", "package": "@github/copilot", "nativePackage": "@github/copilot-linux-x64", "source": "https://registry.npmjs.org/@github/copilot/1.0.106", "auth": "manual /login; no host token import"},
+    "sharp": {"version": "0.35.5", "source": "https://registry.npmjs.org/sharp/0.35.5", "runtime": "glibc optional dependencies via dedicated NODE_PATH"}
+  },
+  "systemPackageCandidates": {
+    "postgresql-17": {"version": "17.11-0+deb13u1", "source": "https://packages.debian.org/trixie/postgresql-17"},
+    "postgresql-17-pgvector": {"version": "0.8.0-1", "source": "https://packages.debian.org/trixie/postgresql-17-pgvector"},
+    "redis-server": {"version": "5:8.0.2-3+deb13u3", "source": "https://packages.debian.org/trixie/redis-server"}
+  },
+  "sandboxPrivilegeQualification": {
+    "status": "mechanism-feasible-with-root-broker-and-bootstrap-adaptation-not-production-security-qualified",
+    "source": "https://github.com/langgenius/dify-sandbox/tree/0.2.15",
+    "paths": ["internal/core/lib/python/add_seccomp.go", "internal/core/lib/nodejs/add_seccomp.go", "internal/core/runner/python/python.go", "internal/core/runner/nodejs/nodejs.go", "internal/server/server.go", "docker/entrypoint.sh", "docker/templates/production.dockerfile"],
+    "observed": "Stock job initialization needs chroot/setgroups/setgid/setuid. Python additionally chowns a 0600 bootstrap before launching its root interpreter; root without DAC bypass cannot read that foreign-owned file. Node works with three caps; root-owned Node extraction plus a Python preopened-stdin adapter worked with four. This is not unmodified-stock feasibility.",
+    "policy": "Root TCB includes bounded provisioning/sshd supervision and a trusted sandbox broker/launcher. Broker operative caps are limited to CHOWN,SETUID,SETGID,SYS_CHROOT. Nonroot services/jobs have zero inheritable/permitted/effective/ambient caps; job supplementary groups empty, no-new-privileges, seccomp and private root. Reserve GID1000 exclusively for pooled jobs and keep service/dev identities outside their UID pool. Broker can access root secrets; no root-broker isolation from keys is claimed. Disable preload, runtime package installation and dependency mutation/refresh inside the broker, not merely a proxy. Root-consumed bootstrap must never be job-writable; no UID reuse until all job descendants are reaped. The temporary ownership-handoff prototype needs production hardening and independent policy review.",
+    "sandboxBrokerOperativeCaps": ["CHOWN", "SETUID", "SETGID", "SYS_CHROOT"],
+    "rootCapabilityCeiling": ["CHOWN", "FOWNER", "SETUID", "SETGID", "KILL", "SYS_CHROOT"],
+    "namespaceLocalSysctls": {"net.ipv4.ip_unprivileged_port_start": "0"},
+    "notGuaranteed": ["per-service network namespaces", "forced sandbox egress through Squid", "hostile-plugin containment", "exclusive service port ownership", "root-broker isolation from root secrets"],
+    "forbidden": ["privileged mode", "host network", "host Docker socket", "broad host mounts", "SYS_ADMIN", "NET_ADMIN", "SYS_PTRACE", "DAC_OVERRIDE", "DAC_READ_SEARCH", "generic privileged user-code execution"],
+    "spike": {
+      "requestAt": "2026-11-06T14:30:34+09:00",
+      "lastOwnedContainerRemovedAt": "2026-11-06T14:39:19+09:00",
+      "elapsedSecondsFromRequest": 525,
+      "scope": "One bounded isolated feasibility spike with candidate/instrumentation iterations; not TDD, full-image integration or production security qualification.",
+      "imageDigest": "sha256:942acde5b90350498f71c9f89fe1c0a578578c51521d6683783e073528b6a26a",
+      "isolation": {"network": "none", "mountCount": 0, "publishedPorts": null, "privileged": false, "capDrop": "ALL", "noNewPrivileges": true, "memoryBytes": 1073741824, "cpus": 1, "pids": 128},
+      "resourcePolicy": {"ownerLabel": "io.okayama-u.dify-image.owner=<run-id>", "stopBelowFreeBytes": 3221225472, "measureWorkspaceAndDockerRootSeparately": true, "measurementFailureStops": true, "prune": false},
+      "finalCaseMinimumFreeBytes": {"workspace": 30518001664, "docker-root": 30518001664},
+      "node": {
+        "version": "v20.20.0",
+        "answer": 42,
+        "uid": 10001,
+        "gid": 1000,
+        "supplementaryGroups": [],
+        "CapInh": "0000000000000000",
+        "CapPrm": "0000000000000000",
+        "CapEff": "0000000000000000",
+        "CapBnd": "00000000000400c1",
+        "CapAmb": "0000000000000000",
+        "NoNewPrivs": 1,
+        "Seccomp": 2,
+        "syntheticDataReads": {"serviceSecret0600": "ENOENT", "sshHostkey0600": "ENOENT", "worldReadableCanary0644": "ENOENT"},
+        "rootPositiveControl": "All three synthetic canaries readable outside job chroot."
+      },
+      "python": {"answer": 42, "uid": 10002, "adaptation": "Root-owned extraction, scratch adapter validated path/type/owner/mode/parent, temporarily chowned bootstrap to root to preopen, restored job ownership, then fed existing FD as stdin to stock Python; FD3 user-code pipe preserved. No DAC bypass cap.", "notQualified": ["external Python capability/seccomp inspection", "concurrent bootstrap safety", "production adapter failure/cleanup/race handling"]},
+      "devControl": {"uid": 2000, "CapPrm": 0, "CapEff": 0, "CapAmb": 0, "privateCanaryReads": "EACCES", "worldReadableCanary": "readable"},
+      "apiControls": {"health": 200, "invalidApiKey": 401},
+      "lowPortControl": {"uid": 2000, "effectiveCapabilities": 0, "threshold1024Bind80": "EACCES", "threshold1024Bind8080": "BOUND", "threshold0Bind80": "BOUND", "actualNginx": "unrun", "effect": "All nonroot identities can bind low ports in this network namespace; not a per-role capability."},
+      "negativeAndDiagnosticControls": ["Three-cap Node succeeds; Python bootstrap chown rejected with operation-not-permitted.", "Four-cap stock startup hit Node exec permission denial; root-owned tar extraction resolved it.", "Node identity instrumentation hit seccomp operation-not-permitted; use allowed getuid and external kernel proc status instead.", "Reopening an inherited foreign-owned 0600 file via /proc/self/fd was denied; consuming the already-open FD via stdin succeeded.", "Scratch adapter ownership was normalized to root/mode0700 before execution."],
+      "cleanup": {"ownedContainersCreatedAndRemoved": 6, "scratchImagesBuilt": 0, "officialSandboxImageCacheRetained": true, "scratchScriptsRemovedAfterRecording": true, "unrelatedResourcesRemoved": false}
+    }
+  },
+  "unqualified": ["apt repository availability and transitive package locks (candidate versions only)", "relocated agent virtualenv entrypoints", "full API native dependency set including libmagic", "plugin and sandbox runtime transplants, private Node20 path versus shared Node24", "broker route/package/preload restrictions, immutable root bootstrap, UID lifecycle and concurrent security probes", "Python job cap/proc assertions and final-image per-process root/child capability qualification", "PostgreSQL 17 and Redis 8 integration", "runtime-key ownership, isolation, corruption/key-loss refusal and persisted SSH hostkeys", "per-role readiness/failure propagation", "SSH and native MCP invalid/unpublished/disabled/old/new-token end-to-end cases", "dual-filesystem guard cancellation and complete ownership labels/bindings", "cold-start, shutdown, real Copilot auth persistence and WSL2 validation"],
+  "mcpDocumentation": "https://docs.dify.ai/en/cloud/use-dify/publish/publish-mcp"
+}

@@ -1,0 +1,57 @@
+# Python environments and generated caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Node.js dependencies and caches
+node_modules/
+.npm/
+
+# Local credentials; keep sanitized configuration examples
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+.ssh/
+.copilot/
+id_rsa
+id_dsa
+id_ecdsa
+id_ed25519
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Local runtime data, exports, and backups
+/data/
+/volumes/
+/backups/
+/exports/
+*.sql
+*.dump
+*.tar
+*.tar.gz
+*.tgz
+*.part
+*.log
+
+# Local SDD execution records; retain specifications and configuration
+/.sdd/approvals.json
+/.sdd/prepare-shown.json
+/.sdd/tdd.jsonl
+
+# Editor and operating-system artifacts
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
